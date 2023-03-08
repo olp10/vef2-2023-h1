@@ -29,9 +29,7 @@ async function create() {
     console.info('data not inserted');
   }
 
-  for (let i = 0; i < 20; i++) {
-    await fakeUser();
-  }
+  await fakeUser();
 
   await end();
 }
@@ -40,24 +38,24 @@ create().catch((err) => {
   console.error('Error creating running setup', err);
 });
 
-
 async function fakeUser() {
-  const username = {
-    name: faker.internet.userName(),
-    password: faker.internet.password(20),
-    isAdmin: false,
+  for (let i = 0; i < 20; i++) {
+    const username = {
+      name: faker.internet.userName(),
+      password: faker.internet.password(20),
+      isAdmin: false,
+    }
+    const q = `
+      INSERT INTO users (username, password, isAdmin)
+      VALUES ($1, $2, $3)
+      RETURNING *
+    `;
+    const values = [
+      username.name,
+      username.password,
+      username.isAdmin
+    ]
+    console.log(values);
+    await query(q, values);
   }
-  const q = `
-    INSERT INTO users (username, password, isAdmin)
-    VALUES ($1, $2, $3)
-    RETURNING *
-  `;
-  const values = [
-    username.name,
-    username.password,
-    username.isAdmin
-  ]
-  console.log(values);
-  await query(q, values);
-
 }

@@ -10,8 +10,6 @@ const app = express();
 
 const path = dirname(fileURLToPath(import.meta.url));
 
-// Fyrir gögn úr formi!
-// app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(router);

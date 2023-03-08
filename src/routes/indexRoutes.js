@@ -7,5 +7,11 @@ export async function indexRoute(req, res) {
     res.render('index');
 }
 
+export async function loginRoute(req, res) {
+  // TODO: Grípa username/password úr req
+  res.render('login');
+}
+
 
 indexRouter.get('/', catchErrors(indexRoute));
+indexRouter.get('/login', catchErrors(loginRoute));

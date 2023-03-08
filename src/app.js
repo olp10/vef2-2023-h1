@@ -3,6 +3,8 @@ import express from 'express';
 import { router } from './routes/api.js';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { adminRouter } from './routes/adminRoutes.js';
+import { indexRouter } from './routes/indexRoutes.js';
 
 const app = express();
 
@@ -17,6 +19,8 @@ app.set('view engine', 'ejs');
 app.use(express.json());
 
 app.use(router);
+app.use(indexRouter);
+app.use(adminRouter);
 
 const port = process.env.PORT || 3000;
 

@@ -8,5 +8,5 @@ export async function adminRoute(req, res) {
 }
 
 // Hmmm.. hefði haldið að rótin (/) hér myndi losa mann við að skrifa admin?
-adminRouter.get('/admin', catchErrors(adminRoute));
+adminRouter.get('/', catchErrors(adminRoute));
 

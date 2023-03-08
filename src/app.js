@@ -20,7 +20,7 @@ app.use(express.json());
 
 app.use(router);
 app.use(indexRouter);
-app.use(adminRouter);
+app.use('/admin', adminRouter);
 
 const port = process.env.PORT || 3000;
 

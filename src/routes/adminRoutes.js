@@ -4,7 +4,7 @@ import { catchErrors } from '../lib/catch-errors.js';
 export const adminRouter = express.Router();
 
 export async function adminRoute(req, res) {
-  res.render('admin');
+  res.json();
 }
 
 adminRouter.get('/', catchErrors(adminRoute));

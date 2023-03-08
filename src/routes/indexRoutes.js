@@ -4,12 +4,11 @@ import { catchErrors } from '../lib/catch-errors.js';
 export const indexRouter = express.Router();
 
 export async function indexRoute(req, res) {
-    res.render('index');
+    res.json();
 }
 
 export async function loginRoute(req, res) {
-  // TODO: Grípa username/password úr req
-  res.render('login');
+  res.json();
 }
 
 

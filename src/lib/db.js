@@ -59,3 +59,22 @@ export async function dropSchema(dropFile = DROP_SCHEMA_FILE) {
 export async function end() {
   await pool.end();
 }
+
+export async function registerUser(username, password, isAdmin) {
+  const q = `
+    INSERT INTO users
+      (username, password, isAdmin)
+    VALUES
+      ($1, $2, $3)
+    RETURNING
+      username, password, isAdmin;
+  `;
+  const values = [username, password, isAdmin];
+  const result = await query(q, values);
+
+  if (result && result.rowCount === 1) {
+    return result.rows[0];
+  }
+
+  return null;
+}

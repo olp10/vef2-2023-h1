@@ -1,29 +1,30 @@
-CREATE TABLE public.users (
-  username character varying(64) NOT NULL UNIQUE PRIMARY KEY,
-  password character varying(256) NOT NULL,
+CREATE TABLE users (
+  id SERIAL UNIQUE PRIMARY KEY,
+  username VARCHAR(64) NOT NULL UNIQUE,
+  password VARCHAR(256) NOT NULL,
   isAdmin BOOLEAN DEFAULT false
 );
 
---Nota skal postgres gagnagrunn og setja upp a.m.k. þrjár töflur sem tengjast á einhvern máta.
-
---Nota skal viðeigandi virkni til að merkja dálka, t.d.
-  -- Setja sem auðkenni (primary key).
-  -- Merkja tengingar (foreign key).
-  -- Merkja sem einstakt (unique).
-  -- Merkja reiti sem viðeigandi gagnatag (strengir, tölur, dagsetningar, texti).
-  -- Setja viðeigandi lengd á reiti.
-  -- Í gagnagrunninn skal hlaða inn viðeigandi gögnum fyrir verkefnið, a.m.k. 20 færslur í heildina, a.m.k. lágmark fimm færslur per töflu.
-
-CREATE TABLE public.xxx (
-
+CREATE TABLE public.recipes (
+  id SERIAL PRIMARY KEY,
+  name character varying(128) NOT NULL,
+  description character varying(512) NOT NULL,
+  instructions character varying(2048) NOT NULL,
+  ingredients character varying(512) NOT NULL
 );
 
-CREATE TABLE public.yyy (
-
+CREATE TABLE public.ingredients (
+  id SERIAL PRIMARY KEY,
+  name character varying(128) NOT NULL,
+  quantity character varying(128) NOT NULL,
+  unit character varying(128) NOT NULL,
+  recipe_id integer REFERENCES recipes(id)
 );
 
-CREATE TABLE public.zzz (
-
+CREATE TABLE public.reviews (
+  id SERIAL PRIMARY KEY,
+  user_id integer REFERENCES users(id),
+  recipe_id integer REFERENCES recipes(id),
+  rating integer NOT NULL,
+  comment character varying(512) NOT NULL
 );
-
--- TODO: Muna að breyta nöfnum þegar búið að ákveða töflur

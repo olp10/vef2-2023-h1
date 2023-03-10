@@ -4,7 +4,6 @@ import dotenv from 'dotenv';
 
 const SCHEMA_FILE = './sql/schema.sql';
 const DROP_SCHEMA_FILE = './sql/drop.sql';
-const DATA_DIR = './data';
 
 dotenv.config();
 

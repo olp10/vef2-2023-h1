@@ -13,7 +13,7 @@ const path = dirname(fileURLToPath(import.meta.url));
 app.use(express.json());
 
 app.use(router);
-app.use(indexRouter);
+app.use('/', indexRouter);
 app.use('/admin', adminRouter);
 
 const port = process.env.PORT || 3000;

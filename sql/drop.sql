@@ -1,6 +1,4 @@
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS xxx;
-DROP TABLE IF EXISTS yyy;
-DROP TABLE IF EXISTS zzz;
-
--- TODO: Muna að breyta nöfnum þegar búið að ákveða töflur
+DROP TABLE IF EXISTS reviews CASCADE;
+DROP TABLE IF EXISTS recipes CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS ingredients CASCADE;

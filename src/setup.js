@@ -29,16 +29,13 @@ async function create() {
     console.info('data not inserted');
   }
 
-  await fakeUser();
+  await fakeUsers();
+  await fakeRecipes();
 
   await end();
 }
 
-create().catch((err) => {
-  console.error('Error creating running setup', err);
-});
-
-async function fakeUser() {
+async function fakeUsers() {
   for (let i = 0; i < 20; i++) {
     const username = {
       name: faker.internet.userName(),
@@ -59,3 +56,71 @@ async function fakeUser() {
     await query(q, values);
   }
 }
+
+async function fakeRecipes() {
+  for (let i = 0; i < 20; i++) {
+    const name = faker.lorem.word();
+    const ingredients = faker.lorem.sentences(2);
+    const instructions = faker.lorem.sentences(5);
+    const description = faker.lorem.sentences(3);
+    const q = `
+      INSERT INTO recipes (name, ingredients, instructions, description)
+      VALUES ($1, $2, $3, $4)
+      RETURNING *
+    `;
+    const values = [
+      name,
+      ingredients,
+      instructions,
+      description
+    ]
+    const res = await query(q, values);
+    const { id } = res.rows[0];
+    await fakeIngredients(id);
+    await fakeReviews(id);
+  }
+}
+
+async function fakeIngredients(id) {
+  for (let i = 0; i < 10; i++) {
+    const name = faker.lorem.word();
+    const quantity = faker.random.numeric({ min: 1, max: 10 });
+    const unit = faker.helpers.arrayElement(['kg', 'g', 'ml', 'l']);
+    const q = `
+      INSERT INTO ingredients (name, quantity, unit, recipe_id)
+      VALUES ($1, $2, $3, $4)
+      RETURNING *
+    `;
+    const values = [
+      name,
+      quantity,
+      unit,
+      id
+    ]
+    await query(q, values);
+  }
+}
+
+async function fakeReviews(recipeId) {
+  for (let i = 0; i < 10; i++) {
+    const rating = faker.random.numeric({ min: 1, max: 5 });
+    const userId = faker.random.numeric({ min: 1, max: 20 });
+    const comment = faker.lorem.sentences(5);
+    const q = `
+      INSERT INTO reviews (recipe_id, rating, user_id, comment)
+      VALUES ($1, $2, $3, $4)
+      RETURNING *
+    `;
+    const values = [
+      recipeId,
+      rating,
+      userId,
+      comment
+    ]
+    await query(q, values);
+  }
+}
+
+create().catch((err) => {
+  console.error('Error creating running setup', err);
+});

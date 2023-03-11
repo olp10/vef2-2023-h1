@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { adminRouter } from './routes/adminRoutes.js';
 import { indexRouter } from './routes/indexRoutes.js';
+import { recipeRouter } from './routes/recipeRoutes.js';
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(express.json());
 app.use(router);
 app.use('/', indexRouter);
 app.use('/admin', adminRouter);
+app.use('/recipes', recipeRouter)
 
 const port = process.env.PORT || 3000;
 

@@ -10,15 +10,15 @@ CREATE TABLE public.recipes (
   name character varying(128) NOT NULL,
   description character varying(512) NOT NULL,
   instructions character varying(2048) NOT NULL,
-  ingredients character varying(512) NOT NULL
+  image character varying(255) NOT NULL
 );
 
 CREATE TABLE public.ingredients (
-  id SERIAL PRIMARY KEY,
   name character varying(128) NOT NULL,
   quantity character varying(128) NOT NULL,
   unit character varying(128) NOT NULL,
-  recipe_id integer REFERENCES recipes(id)
+  recipe_id integer REFERENCES recipes(id),
+  PRIMARY KEY (recipe_id, name)
 );
 
 CREATE TABLE public.reviews (

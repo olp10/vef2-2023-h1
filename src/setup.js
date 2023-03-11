@@ -1,8 +1,11 @@
 import { readFile } from 'fs/promises';
 import { createSchema, dropSchema, end, query } from './lib/db.js';
 import { faker } from '@faker-js/faker';
+import { listImages, uploadImage } from './lib/cloudinary.js';
 
 async function create() {
+  await uploadImage(faker.image.imageUrl());
+  await listImages();
   const drop = await dropSchema();
 
   if (drop) {
@@ -60,19 +63,19 @@ async function fakeUsers() {
 async function fakeRecipes() {
   for (let i = 0; i < 20; i++) {
     const name = faker.lorem.word();
-    const ingredients = faker.lorem.sentences(2);
     const instructions = faker.lorem.sentences(5);
     const description = faker.lorem.sentences(3);
+    const image = faker.image.food();
     const q = `
-      INSERT INTO recipes (name, ingredients, instructions, description)
+      INSERT INTO recipes (name, instructions, description, image)
       VALUES ($1, $2, $3, $4)
       RETURNING *
     `;
     const values = [
       name,
-      ingredients,
       instructions,
-      description
+      description,
+      image
     ]
     const res = await query(q, values);
     const { id } = res.rows[0];
@@ -83,7 +86,7 @@ async function fakeRecipes() {
 
 async function fakeIngredients(id) {
   for (let i = 0; i < 10; i++) {
-    const name = faker.lorem.word();
+    const name = faker.lorem.word(20) + i;
     const quantity = faker.random.numeric({ min: 1, max: 10 });
     const unit = faker.helpers.arrayElement(['kg', 'g', 'ml', 'l']);
     const q = `

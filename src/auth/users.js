@@ -12,7 +12,8 @@ dotenv.config();
 
 const { BCRYPT_ROUNDS: bcryptRounds = 1 } = process.env;
 
-export async function createUser(username, email, password) {
+export async function createUser(username, password) {
+  console.log(username);
   const hashedPassword = await bcrypt.hash(
     password,
     parseInt(bcryptRounds, 10)
@@ -20,14 +21,14 @@ export async function createUser(username, email, password) {
 
   const q = `
     INSERT INTO
-      users (username, email, password)
+      users (username, password, isAdmin)
     VALUES
       ($1, $2, $3)
     RETURNING *`;
 
-  const values = [xss(username), xss(email), hashedPassword];
+  const values = [xss(username), hashedPassword, false];
   const result = await query(q, values);
-
+  console.log(result);
   return result.rows[0];
 }
 
@@ -97,6 +98,7 @@ function isString(s) {
 }
 
 // TODO refactor
+// TODO: taka út email - Notendur bara með unique username og password
 export async function updateUser(id, password, email) {
   if (!isInt(id)) {
     return null;

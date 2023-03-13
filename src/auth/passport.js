@@ -1,11 +1,15 @@
+/*
 import passport from 'passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { findById } from './users.js';
+import dotenv from 'dotenv';
 
 /**
  * Passport stillingar og middleware til að athuga hvort notandi sé innsrkáður
  * og/eða stjórnandi.
  */
+/*
+dotenv.config();
 
 const { JWT_SECRET: jwtSecret, TOKEN_LIFETIME: tokenLifetime = 3600 } =
   process.env;
@@ -58,7 +62,7 @@ export function addUserIfAuthenticated(req, res, next) {
   })(req, res, next);
 } */
 
-
+/*
 
 export function requireAdmin(req, res, next) {
   return passport.authenticate('jwt', { session: false }, (err, user, info) => {
@@ -93,4 +97,4 @@ export const jwtOptions = {
 
 passport.use(new Strategy(jwtOptions, strat));
 
-export default passport;
+export default passport; */

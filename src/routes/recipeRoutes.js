@@ -1,8 +1,8 @@
 import express from 'express';
-import { requireAdmin } from '../auth/passport.js';
 import { catchErrors } from '../lib/catch-errors.js';
 import { query } from '../lib/db.js';
 import { isString } from '../lib/isString.js';
+import { ensureLoggedIn } from '../lib/login.js';
 import { validationCheck } from '../validation/helpers.js';
 
 // root -> /recipes
@@ -95,6 +95,7 @@ recipeRouter.get('/', catchErrors(getAllRecipesRoute));
 
 recipeRouter.post(
   '/',
+  ensureLoggedIn,
   // requireAdmin, // TODO: Authentication gengur ekki fyrr en búið að útfæra leið til að skrá sig inn sem admin
   validationCheck,
   catchErrors(createRecipeRoute)

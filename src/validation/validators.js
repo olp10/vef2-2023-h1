@@ -1,5 +1,4 @@
 import { body, param, query } from 'express-validator';
-import { getCart } from '../api/cart.js';
 import {
   comparePasswords,
   findByEmail,
@@ -11,6 +10,24 @@ import { resourceExists } from './helpers.js';
 /**
  * Collection of validators based on express-validator
  */
+
+export async function validateUser(req, res) {
+  const { username, password } = req.body;
+  const user = await findByUsername(username);
+  if (!user) {
+    res.status(400).json({ message: 'Invalid username or password' });
+    return;
+  }
+  const valid = await comparePasswords(password, user.password);
+  if (!valid) {
+    res.status(400).json({ message: 'Invalid username or password' });
+    return;
+  }
+  req.login(user, function (err) {
+    if (err) { return next(err); }
+    res.status(200).json({ message: 'Successfully logged in' });
+  });
+}
 
 export const pagingQuerystringValidator = [
   query('offset')

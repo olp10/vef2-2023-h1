@@ -57,7 +57,7 @@ export function ensureLoggedIn(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.status(401).json({ message: 'Must log in to post new recipe' });
+  res.status(401).json({ message: 'Must log in to perform this action' });
 }
 
 export default passport;

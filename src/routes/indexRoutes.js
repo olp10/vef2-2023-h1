@@ -10,11 +10,12 @@ export async function indexRoute(req, res) {
     'GET /recipes/:id -> Skilar uppskrift',
     'GET /recipes/:id/ingredients -> Skilar lista af hráefnum í uppskrift',
     'POST /recipes -> Býr til nýja uppskrift',
+    'POST /recipes/:id/ingredients -> Bætir hráefnum við uppskrift',
     'PATCH /recipes/:id -> Uppfærir uppskrift',
     'DELETE /recipes/:id -> Eyðir uppskrift',
     'POST /login -> skráir notanda inn',
     'POST /logout -> skráir notanda út',
-    'POST /register -> skráir nýjan notanda',
+    'POST /register -> stofnar nýjan notanda',
   ]
   res.status(200).json(allRoutes);
 }
@@ -25,4 +26,3 @@ export async function loginRoute(req, res) {
 
 
 indexRouter.get('/', catchErrors(indexRoute));
-indexRouter.get('/login', catchErrors(loginRoute));

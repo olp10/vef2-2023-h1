@@ -1,11 +1,9 @@
 import { readFile } from 'fs/promises';
 import { createSchema, dropSchema, end, query } from './lib/db.js';
 import { faker } from '@faker-js/faker';
-import { listImages, uploadImage } from './lib/cloudinary.js';
+import { createUser } from './auth/users.js';
 
 async function create() {
-  await uploadImage(faker.image.imageUrl());
-  await listImages();
   const drop = await dropSchema();
 
   if (drop) {
@@ -34,8 +32,16 @@ async function create() {
 
   await fakeUsers();
   await fakeRecipes();
+  await createAdmin();
+  await createUser('notAdmin', 'notAdmin', false);
 
   await end();
+}
+
+async function createAdmin() {
+  const admin = 'admin';
+  const password = 'password';
+  await createUser(admin, password, true);
 }
 
 async function fakeUsers() {

@@ -1,4 +1,4 @@
-/*
+
 import passport from 'passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { findById } from './users.js';
@@ -8,7 +8,7 @@ import dotenv from 'dotenv';
  * Passport stillingar og middleware til að athuga hvort notandi sé innsrkáður
  * og/eða stjórnandi.
  */
-/*
+
 dotenv.config();
 
 const { JWT_SECRET: jwtSecret, TOKEN_LIFETIME: tokenLifetime = 3600 } =
@@ -21,6 +21,7 @@ if (!jwtSecret) {
 
 async function strat(data, next) {
   // fáum id gegnum data sem geymt er í token
+  console.log('data', data);
   const user = await findById(data.id);
 
   if (user) {
@@ -49,7 +50,7 @@ async function strat(data, next) {
     },
   )(req, res, next);
 } */
-/*
+
 export function addUserIfAuthenticated(req, res, next) {
   return passport.authenticate('jwt', { session: false }, (err, user) => {
     if (err) {
@@ -60,9 +61,18 @@ export function addUserIfAuthenticated(req, res, next) {
     }
     return next();
   })(req, res, next);
-} */
+}
 
-/*
+export const jwtOptions = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: jwtSecret,
+};
+
+passport.use(new Strategy(jwtOptions, strat));
+
+export const tokenOptions = { expiresIn: parseInt(tokenLifetime, 10) };
+
+
 
 export function requireAdmin(req, res, next) {
   return passport.authenticate('jwt', { session: false }, (err, user, info) => {
@@ -70,14 +80,13 @@ export function requireAdmin(req, res, next) {
       return next(err);
     }
 
-    if (!user) {
+    if (!req.user) {
       const error =
         info.name === 'TokenExpiredError' ? 'expired token' : 'invalid token';
-
       return res.status(401).json({ error });
     }
 
-    if (!user.admin) {
+    if (!req.user.isadmin) {
       const error = 'insufficient authorization';
       return res.status(401).json({ error });
     }
@@ -88,13 +97,4 @@ export function requireAdmin(req, res, next) {
   })(req, res, next);
 }
 
-export const tokenOptions = { expiresIn: parseInt(tokenLifetime, 10) };
-
-export const jwtOptions = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: jwtSecret,
-};
-
-passport.use(new Strategy(jwtOptions, strat));
-
-export default passport; */
+export default passport;

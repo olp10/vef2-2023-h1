@@ -12,7 +12,7 @@ dotenv.config();
 
 const { BCRYPT_ROUNDS: bcryptRounds = 1 } = process.env;
 
-export async function createUser(username, password) {
+export async function createUser(username, password, isAdmin = false) {
   console.log(username);
   const hashedPassword = await bcrypt.hash(
     password,
@@ -26,7 +26,7 @@ export async function createUser(username, password) {
       ($1, $2, $3)
     RETURNING *`;
 
-  const values = [xss(username), hashedPassword, false];
+  const values = [xss(username), hashedPassword, isAdmin];
   const result = await query(q, values);
   console.log(result);
   return result.rows[0];

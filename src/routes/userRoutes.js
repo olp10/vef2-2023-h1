@@ -1,8 +1,11 @@
 import express from 'express';
 import passport from 'passport';
-import { createUser } from '../auth/users.js';
+import { addUserIfAuthenticated } from '../auth/passport.js';
+import { comparePasswords, createUser, findByUsername } from '../auth/users.js';
 import { catchErrors } from '../lib/catch-errors.js';
 import { ensureLoggedIn } from '../lib/login.js';
+import { xssSanitizationMiddleware } from '../lib/validation.js';
+import { validateUser } from '../validation/validators.js';
 
 export const userRouter = express.Router();
 
@@ -16,11 +19,11 @@ export async function loginRoute(req, res) {
   console.log("LoginRoute triggered");
   if (req.isAuthenticated()) {
     res.status(200).json({
-      message: 'You are already logged in',
+      message: 'Successfully logged in',
     })
   } else {
-    res.status(200).json({
-      message: 'You are not logged in',
+    res.status(400).json({
+      message: 'Unable to log in',
     })
   }
 }
@@ -30,7 +33,7 @@ export async function logoutRoute(req, res) {
   req.logout(function (err) {
     if (err) { return next(err); }
     res.status(200).json({
-      message: 'You are logged out',
+      message: 'Logged out',
     })
   });
 }
@@ -56,17 +59,19 @@ export async function registerUserRoute(req, res) {
 }
 
 userRouter.post(
-  '/register',
+  '/register', // TODO: Sanitization, Validation
   catchErrors(registerUserRoute)
 );
 
 userRouter.post(
   '/login',
-  // TODO: Setja validation á undan passport.authenticate
+  xssSanitizationMiddleware,
+  validateUser,
   passport.authenticate('local', {
     failureMessage: 'Notendanafn eða lykilorð vitlaust.',
     failureRedirect: '/login',
   }),
+  addUserIfAuthenticated,
   catchErrors(loginRoute)
 );
 

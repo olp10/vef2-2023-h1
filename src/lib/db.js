@@ -108,3 +108,39 @@ export async function conditionalUpdate(table, id, fields, values) {
 
   return result;
 }
+
+async function findUserByUsername(username) {
+  const q = 'SELECT * FROM users WHERE username = $1';
+  const values = [username];
+  const result = await query(q, values);
+  return result.rows[0] ? result.rows[0] : null;
+}
+
+export async function deleteRecipe(id) {
+  await deleteIngredientsForRecipe(id);
+  await deleteReviewsForRecipe(id);
+  const q = 'DELETE FROM recipes WHERE id = $1';
+  const values = [id];
+  const result = await query(q, values);
+  return result;
+}
+
+async function deleteIngredientsForRecipe(recipeId) {
+  const q = 'DELETE FROM ingredients WHERE recipe_id = $1';
+  const values = [recipeId];
+  const result = await query(q, values);
+  return result;
+}
+async function deleteReviewsForRecipe(recipeId) {
+  const q = 'DELETE FROM reviews WHERE recipe_id = $1';
+  const values = [recipeId];
+  const result = await query(q, values);
+  return result;
+}
+
+export async function getRecipeById(id) {
+  const q = 'SELECT * FROM recipes WHERE id = $1';
+  const values = [id];
+  const result = await query(q, values);
+  return result.rows[0] ? result.rows[0] : null;
+}

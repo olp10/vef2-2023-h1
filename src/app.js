@@ -28,9 +28,11 @@ const {
 app.use(
   session({
     secret: sessionSecret,
-    resave: false,
-    saveUninitialized: false,
-    maxAge: 20 * 1000,
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 20 * 1000,
+    }
   })
 );
 

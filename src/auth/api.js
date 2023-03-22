@@ -12,7 +12,7 @@ import {
   usernameDoesNotExistValidator,
   usernameValidator,
 } from '../validation/validators.js';
-import { jwtOptions, requireAdmin, tokenOptions } from './passport.js';
+import { jwtOptions, requireAdmin, requireAuthentication, tokenOptions } from './passport.js';
 import { createUser, findById, findByUsername, updateUser } from './users.js';
 
 /**
@@ -53,19 +53,7 @@ async function loginRoute(req, res) {
   });
 }
 
-async function currentUserRoute(req, res) {
-  const { user: { id } = {} } = req;
 
-  const user = await findById(id);
-
-  if (!user) {
-    return res.status(404).json({ error: 'User not found' });
-  }
-
-  delete user.password;
-
-  return res.json(user);
-}
 
 async function updateCurrentUserRoute(req, res) {
   const { id } = req.user;
@@ -108,7 +96,7 @@ router.post(
   catchErrors(loginRoute)
 );
 
-router.get('/users/me', requireAdmin, catchErrors(currentUserRoute));
+
 
 router.patch(
   '/users/me',

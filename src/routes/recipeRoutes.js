@@ -141,7 +141,7 @@ async function addImageToRecipe(req, res) {
   const result = await query(q, values);
   res.json(result.rows[0]);
 
-  //await uploadImage(image);
+  await uploadImage(image);
 }
 
 async function addIngredientsRoute(req, res) {
@@ -161,7 +161,7 @@ recipeRouter.post(
 );
 
 recipeRouter.post(
-  '/:id/addImage',
+  '/recipes/:id/addImage',
   //ensureLoggedIn, // TODO: Sanitization
   //requireAdmin,
   catchErrors(addImageToRecipe)

@@ -3,6 +3,10 @@ import { createSchema, dropSchema, end, query } from './lib/db.js';
 import { faker } from '@faker-js/faker';
 import { createUser } from './auth/users.js';
 
+
+/**
+ * Add fake data to database - Users, recipes, ingredients, reviews, one admin account and one not admin account
+ */
 async function create() {
   const drop = await dropSchema();
 

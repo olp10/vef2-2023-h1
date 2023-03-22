@@ -11,7 +11,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const { JWT_SECRET: jwtSecret, TOKEN_LIFETIME: tokenLifetime = 3600 } =
+const { JWT_SECRET: jwtSecret, TOKEN_LIFETIME: tokenLifetime = 3600000 } =
   process.env;
 
 if (!jwtSecret) {
@@ -31,7 +31,7 @@ async function strat(data, next) {
   }
 }
 
-/* export function requireAuthentication(req, res, next) {
+export function requireAuthentication(req, res, next) {
   return passport.authenticate(
     'jwt',
     { session: false },
@@ -39,6 +39,7 @@ async function strat(data, next) {
       if (err) {
         return next(err);
       }
+      console.log('user: ' + user);
       if (!user) {
         const error = info.name === 'TokenExpiredError'
           ? 'expired token' : 'invalid token';
@@ -49,7 +50,7 @@ async function strat(data, next) {
       return next();
     },
   )(req, res, next);
-} */
+}
 
 export function addUserIfAuthenticated(req, res, next) {
   return passport.authenticate('jwt', { session: false }, (err, user) => {

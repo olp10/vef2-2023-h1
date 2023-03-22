@@ -4,7 +4,7 @@ import session from 'express-session';
 import passport from './lib/login.js';
 import { router } from './routes/api.js';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { dirname } from 'path';
 import { adminRouter } from './routes/adminRoutes.js';
 import { indexRouter } from './routes/indexRoutes.js';
 import { recipeRouter } from './routes/recipeRoutes.js';
@@ -14,8 +14,6 @@ import { isInvalid } from './lib/template-helpers.js';
 const app = express();
 
 dotenv.config();
-
-const path = dirname(fileURLToPath(import.meta.url));
 
 app.use(express.json());
 

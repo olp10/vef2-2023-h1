@@ -62,6 +62,7 @@ async function getRecipeById(id) {
   return recipe.rows[0];
 }
 
+
 async function createRecipeRoute(req, res) {
   const { name, description, instructions, image  } = req.body;
   const fields = [
@@ -149,16 +150,102 @@ async function addImageToRecipe(req, res) {
   await uploadImage(image);
 }
 
+
 async function addIngredientsRoute(req, res) {
-  const { id } = req.params; // TODO: add ingredients to recipes
+  const { id } = req.params;
+  const { name, quantity, unit } = req.body;
+
+  const fields = [
+    isString(name) ? name : null,
+    isString(quantity) ? quantity : null,
+    isString(unit) ? unit : null
+  ]
+  const values = [
+    isString(name) ? name : null,
+    isString(quantity) ? quantity : null,
+    isString(unit) ? unit : null
+  ]
+
+  if (!fields) {
+    res.status(400).json({ message: 'Missing required fields' });
+    return;
+  }
+  const filteredFields = fields.filter((i) => typeof i === 'string');
+  const filteredValues = values.filter((i) => typeof i === 'string');
+
+  if (filteredFields.length === 0) {
+    res.status(400).json({ message: 'Missing or illegal fields' });
+  }
+
+  if (filteredFields.length !== filteredValues.length) {
+    return res.status(400).json({ error: 'Number of fields doesn\'t match number of values' });
+  }
+
+  const q = (`
+    INSERT INTO ingredients
+      (name, quantity, unit, recipe_id)
+    VALUES
+      ($1, $2, $3, $4)
+  `);
+
+  filteredValues.push(id);
+  const result = await query(q, filteredValues);
+  if(result) {
+    return res.status(200).json(result.rows[0]);
+  }
+  return res.status(400).json({ error: 'Failed to add ingredient' });
+}
+
+async function getRecipesByIngredient(req, res) {
+  const { name } = req.params;
+  if (!isString(name)) {
+    res.status(400).json({ message: 'Invalid ingredient name' })
+  }
+  const recipe = await query (`
+    SELECT * FROM recipes
+    WHERE id = (
+      SELECT recipe_id FROM ingredients
+      WHERE name = $1
+    );
+  `, [name]);
+  return res.json(recipe.rows[0]);
+}
+
+async function getRecipesByIngredients(req, res) {
+  let queryString = `
+  SELECT * FROM recipes WHERE id in (
+    SELECT recipe_id
+    FROM ingredients
+    WHERE
+  `;
+
+  let ingredientNames = [];
+  const bodyLength = req.body.length;
+  for (let i=0; i<bodyLength; i++) {
+    ingredientNames.push(req.body[i].ingredient);
+    if (i === 0 ) {
+      queryString += ` name = $1`
+    } else {
+      queryString += ` OR name = $${i + 1}`
+    }
+  }
+  queryString += `
+  GROUP BY recipe_id
+  HAVING count(1) > ${bodyLength - 1} );
+  `
+  console.log('queryString: ' + queryString);
+  const recipes = await query(queryString, ingredientNames);
+  return res.json(recipes.rows[0]);
 }
 
 
 // TODO: Paging
 recipeRouter.get('/', catchErrors(getAllRecipesRoute));
 recipeRouter.get('/:id', catchErrors(getRecipeRoute));
-
 recipeRouter.get('/:id/ingredients', catchErrors(getIngredientsRoute));
+recipeRouter.post('/ingredients', catchErrors(getRecipesByIngredients));
+recipeRouter.get('/ingredient/:name', catchErrors(getRecipesByIngredient));
+
 recipeRouter.post(
   '/:id/ingredients',
   ensureLoggedIn, // TODO: Sanitization

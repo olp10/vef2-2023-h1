@@ -8,7 +8,8 @@
     "dev": "dotenv -e .env -- nodemon ./src/app.js",
     "test:unit": "NODE_ENV=test NODE_OPTIONS='--experimental-vm-modules' dotenv -e .env.test -- jest ./*.test.js --testPathIgnorePatterns ./src/test/integration/",
     "test:integration": "NODE_ENV=test NODE_OPTIONS='--experimental-vm-modules' dotenv -e .env.test -- jest ./src/test/integration/*.test.js",
-    "test": "concurrently npm:test:*"
+    "test": "concurrently npm:test:*",
+    "setup": "dotenv -e .env -- node ./src/setup.js node ./src/app.js"
   },
   "keywords": [],
   "author": "",

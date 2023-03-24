@@ -7,7 +7,7 @@ const DROP_SCHEMA_FILE = './sql/drop.sql';
 
 dotenv.config();
 
-const { DATABASE_URL: connectionString, PORT: port } =
+const { DATABASE_URL: connectionString } =
   process.env;
 
 const pool = new pg.Pool({ connectionString });

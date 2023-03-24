@@ -73,8 +73,6 @@ passport.use(new Strategy(jwtOptions, strat));
 
 export const tokenOptions = { expiresIn: parseInt(tokenLifetime, 10) };
 
-
-
 export function requireAdmin(req, res, next) {
   return passport.authenticate('jwt', { session: false }, (err, user, info) => {
     if (err) {

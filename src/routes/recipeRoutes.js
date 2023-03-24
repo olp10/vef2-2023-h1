@@ -5,7 +5,8 @@ import { deleteRecipe, query } from '../lib/db.js';
 import { isString } from '../lib/isString.js';
 import { ensureLoggedIn } from '../lib/login.js';
 import { validationCheck } from '../validation/helpers.js';
-import { listImages, uploadImage } from '../lib/cloudinary.js';
+import { uploadImage } from '../lib/cloudinary.js';
+import xss from 'xss';
 
 // root -> /recipes
 
@@ -84,6 +85,10 @@ async function createRecipeRoute(req, res) {
   const filteredFields = fields.filter((i) => typeof i === 'string');
   const filteredValues = values.filter((i) => typeof i === 'string');
 
+  for (let i = 0; i < filteredValues.length; i++) {
+    filteredValues[i] = xss(filteredValues[i]);
+  }
+
   if (filteredFields.length === 0) {
     res.status(400).json({ message: 'Missing or illegal fields' });
   }
@@ -137,7 +142,7 @@ async function addImageToRecipe(req, res) {
     WHERE id = $2
     RETURNING *;
   `;
-  const values = [image, id];
+  const values = [xss(image), id];
   const result = await query(q, values);
   res.json(result.rows[0]);
 

@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import xss from 'xss';
 
 export async function comparePasswords(password, hash) {
   try {
@@ -55,7 +56,7 @@ export async function createUser(username, password) {
   `;
 
   try {
-    const result = await query(q, [username, hashedPassword]);
+    const result = await query(q, [xss(username), hashedPassword]);
     return result.rows[0];
   } catch (e) {
     console.error('Gat ekki búið til notanda');

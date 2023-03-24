@@ -9,6 +9,8 @@ export async function indexRoute(req, res) {
     'GET /recipes -> Skilar öllum uppskriftum',
     'GET /recipes/:id -> Skilar uppskrift',
     'GET /recipes/:id/ingredients -> Skilar lista af hráefnum í uppskrift',
+    'GET /recipes/ingredients/:name -> Skilar uppskriftum sem innihalda tiltekið hráefni',
+    'POST /recipes/ingredients -> Skilar uppskriftum sem innihalda öll hráefni í lista',
     'POST /recipes -> Býr til nýja uppskrift',
     'POST /recipes/:id/ingredients -> Bætir hráefnum við uppskrift',
     'PATCH /recipes/:id -> Uppfærir uppskrift',

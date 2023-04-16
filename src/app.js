@@ -10,6 +10,7 @@ import { indexRouter } from './routes/indexRoutes.js';
 import { recipeRouter } from './routes/recipeRoutes.js';
 import { userRouter } from './routes/userRoutes.js';
 import { isInvalid } from './lib/template-helpers.js';
+import { cors } from './lib/cors.js';
 
 const app = express();
 
@@ -41,6 +42,7 @@ app.locals = {
   isInvalid,
 };
 
+app.use(cors);
 app.use(router);
 app.use(userRouter);
 app.use('/', indexRouter);

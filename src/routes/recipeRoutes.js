@@ -1,7 +1,7 @@
 import express from 'express';
 import { requireAdmin } from '../auth/passport.js';
 import { catchErrors } from '../lib/catch-errors.js';
-import { deleteRecipe, query } from '../lib/db.js';
+import { conditionalUpdate, deleteRecipe, query } from '../lib/db.js';
 import { isString } from '../lib/isString.js';
 import { ensureLoggedIn } from '../lib/login.js';
 import { validationCheck } from '../validation/helpers.js';
@@ -13,8 +13,9 @@ import xss from 'xss';
 export const recipeRouter = express.Router();
 
 async function getAllRecipesRoute(req, res) {
-  const q = 'SELECT * FROM recipes';
-  const recipes = await query(q);
+  const { limit, offset } = req.query;
+  const q = 'SELECT * FROM recipes LIMIT $1 OFFSET $2';
+  const recipes = await query(q, [limit, offset]);
   res.json(recipes.rows);
 }
 
@@ -24,7 +25,7 @@ async function getRecipeRoute(req, res) {
     SELECT * FROM recipes WHERE id = $1;
   `, [id]);
 
-  if (recipe.rows === [] || recipe.rows.length === 0) {
+  if (recipe?.rows === [] || recipe?.rows.length === 0) {
     return res.status(404).json({ message: 'Recipe not found' });
   }
   return res.json(recipe.rows[0]);
@@ -32,7 +33,37 @@ async function getRecipeRoute(req, res) {
 
 async function updateRecipeRoute(req, res) {
   const { id } = req.params;
-  console.log("Triggered updateRecipeRoute");
+  const { user, recipeName, description, instructions, image } = req.body;
+  console.log(req.body);
+  if (user) {
+    const fields = [
+      isString(recipeName) ? 'name' : null,
+      isString(description) ? 'description' : null,
+      isString(instructions) ? 'instructions' : null,
+      isString(image) ? 'image' : null
+    ]
+    const values = [
+      isString(recipeName) ? recipeName : null,
+      isString(description) ? description : null,
+      isString(instructions) ? instructions : null,
+      isString(image) ? image : null
+    ]
+    if (!fields) {
+      res.status(400).json({ message: 'Missing required fields' });
+      return;
+    }
+    const filteredFields = fields.filter((i) => typeof i === 'string');
+    const filteredValues = values.filter((i) => typeof i === 'string');
+
+    if (id) {
+      const result = await conditionalUpdate('recipes', id.toString(), filteredFields, filteredValues);
+      if (!result) {
+        return res.status(400).json({
+          error: 'Nothing to update',
+        })
+      }
+    }
+  }
   res.json("updateRecipe");
 }
 
@@ -269,8 +300,8 @@ recipeRouter.post(
 
 recipeRouter.patch(
   '/:id',
-  ensureLoggedIn,
-  requireAdmin, // TODO: Validation og sanitization
+  //ensureLoggedIn,
+  //requireAdmin, // TODO: Validation og sanitization
   catchErrors(updateRecipeRoute)
 );
 

@@ -79,6 +79,7 @@ export async function registerUser(username, password, isAdmin) {
 }
 
 export async function conditionalUpdate(table, id, fields, values) {
+  console.log('conditionalUpdate', table, id, fields, values);
   const filteredFields = fields.filter((i) => typeof i === 'string');
   const filteredValues = values.filter(
     (i) => typeof i === 'string' || typeof i === 'number' || i instanceof Date
@@ -144,3 +145,46 @@ export async function getRecipeById(id) {
   const result = await query(q, values);
   return result.rows[0] ? result.rows[0] : null;
 }
+
+/*
+export async function conditionalUpdate(
+  table,
+  id,
+  fields,
+  values) {
+
+  if (!fields) {
+    return null;
+  }
+
+  const filteredFields = fields.filter((i) => typeof i === 'string');
+
+  const filteredValues = values.filter(
+    (i) => typeof i === 'string' || typeof i === 'number' || i instanceof Date
+  );
+
+  if (filteredFields.length === 0) {
+    return null;
+  }
+
+  if (filteredFields.length !== filteredValues.length) {
+    return null;
+  }
+  // id is field = 1
+  const updates = filteredFields.map((field, i) => `${field} = $${i + 2}`);
+
+  const q = `
+    UPDATE ${table}
+      SET ${updates.join(', ')}
+    WHERE
+      id = $1
+    RETURNING *
+    `;
+
+  const queryValues = [id].concat(filteredValues);
+  const result = await query(q, queryValues);
+  if (result) {
+    return result.rows[0];
+  }
+  return null;
+}*/

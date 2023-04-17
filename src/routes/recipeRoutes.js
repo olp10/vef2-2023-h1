@@ -31,6 +31,41 @@ async function getRecipeRoute(req, res) {
   return res.json(recipe.rows[0]);
 }
 
+async function updateIngredientsRoute(req, res) {
+  const ingredients = req.body;
+  // console.log(ingredients);
+
+  for (let i = 0; i < ingredients.length; i++) {
+    const fields = [
+      isString(ingredients[i].name) ? 'name' : null,
+      isString(ingredients[i].quantity) ? 'quantity' : null,
+      isString(ingredients[i].unit) ? 'unit' : null
+    ]
+    const values = [
+      isString(ingredients[i].name) ? ingredients[i].name : null,
+      isString(ingredients[i].quantity) ? ingredients[i].quantity : null,
+      isString(ingredients[i].unit) ? ingredients[i].unit : null
+    ]
+    if (!fields) {
+      res.status(400).json({ message: 'Missing required fields' });
+      return;
+    }
+    const filteredFields = fields.filter((i) => typeof i === 'string');
+    const filteredValues = values.filter((i) => typeof i === 'string');
+
+    const id = ingredients[i].id;
+    if (id) {
+      const result = await conditionalUpdate('ingredients', id.toString(), filteredFields, filteredValues);
+      if (!result) {
+        return res.status(400).json({
+          error: 'Nothing to update',
+        })
+      }
+    }
+  }
+  res.json("updateIngredients");
+}
+
 async function updateRecipeRoute(req, res) {
   const { id } = req.params;
   const { user, recipeName, description, instructions, image } = req.body;
@@ -296,6 +331,11 @@ recipeRouter.post(
   requireAdmin,
   validationCheck, // TODO: Validation og sanitization
   catchErrors(createRecipeRoute)
+);
+
+recipeRouter.patch(
+  '/:id/ingredients',
+  catchErrors(updateIngredientsRoute)
 );
 
 recipeRouter.patch(

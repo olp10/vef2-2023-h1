@@ -25,6 +25,8 @@ async function getRecipeRoute(req, res) {
     SELECT * FROM recipes WHERE id = $1;
   `, [id]);
 
+  // Komment til að pusha eh breytingu fyrir deploy!
+
   if (recipe?.rows === [] || recipe?.rows.length === 0) {
     return res.status(404).json({ message: 'Recipe not found' });
   }

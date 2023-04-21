@@ -65,17 +65,49 @@ async function fakeUsers() {
       username.password,
       username.isAdmin
     ]
-    console.log(values);
+    // console.log(values);
     await query(q, values);
   }
 }
 
+// async function fakeRecipes() {
+//   for (let i = 0; i < 20; i++) {
+//     const name = faker.lorem.word();
+//     const instructions = faker.lorem.sentences(5);
+//     const description = faker.lorem.sentences(3);
+//     const image = faker.image.food();
+//     const q = `
+//       INSERT INTO recipes (name, instructions, description, image)
+//       VALUES ($1, $2, $3, $4)
+//       RETURNING *
+//     `;
+//     const values = [
+//       name,
+//       instructions,
+//       description,
+//       image
+//     ]
+//     const res = await query(q, values);
+//     const { id } = res.rows[0];
+//     console.log('here');
+//     console.log(id);
+//     await fakeIngredients(id);
+//     await fakeReviews(id);
+//   }
+// }
+
 async function fakeRecipes() {
+  const recipeNames = [
+    'Súkkulaðikaka', 'Tiramisu', 'Pizza',
+    'Pasta', 'Ostakaka', 'Hrísgrjónaréttur',
+    'Tacos', 'Hamborgari', 'Sushi', 'Salad'
+  ];
   for (let i = 0; i < 20; i++) {
-    const name = faker.lorem.word();
-    const instructions = faker.lorem.sentences(5);
-    const description = faker.lorem.sentences(3);
-    const image = faker.image.food();
+    const numName = getRandomInt(0, recipeNames.length - 1);
+    const name = recipeNames[numName];
+    const instructions = `Það er lítið mál að búa til ${name} ef þú fylgir þessum leiðbeiningum..`;
+    const description = `Þessi ${name} uppskrift er alveg ómótstæðileg, þú bara verður að prófa!`;
+    const image = faker.image.food(640, 480, true);
     const q = `
       INSERT INTO recipes (name, instructions, description, image)
       VALUES ($1, $2, $3, $4)
@@ -88,15 +120,27 @@ async function fakeRecipes() {
       image
     ]
     const res = await query(q, values);
+    // console.log(res);
     const { id } = res.rows[0];
     await fakeIngredients(id);
     await fakeReviews(id);
   }
 }
 
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 async function fakeIngredients(id) {
-  for (let i = 0; i < 10; i++) {
-    const name = faker.lorem.word(20) + i;
+  const ingredientNames = [
+    'hveiti', 'sykur', 'salt',
+    'smjör', 'mjólk', 'egg',
+    'vanilla', 'súkkulaði', 'ostur', 'spínat'
+  ];
+  const numIngredients = getRandomInt(3, 10);
+  for (let i = 0; i < numIngredients; i++) {
+    const numName = getRandomInt(0, ingredientNames.length - 1);
+    const name = ingredientNames[numName];
     const quantity = faker.random.numeric({ min: 1, max: 10 });
     const unit = faker.helpers.arrayElement(['kg', 'g', 'ml', 'l']);
     const q = `
@@ -110,7 +154,9 @@ async function fakeIngredients(id) {
       unit,
       id
     ]
-    await query(q, values);
+
+    const res = await query(q, values);
+    console.log(res);
   }
 }
 

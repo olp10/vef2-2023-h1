@@ -14,11 +14,14 @@ CREATE TABLE public.recipes (
 );
 
 CREATE TABLE public.ingredients (
+  id SERIAL PRIMARY KEY,
+  recipe_id INT,
   name character varying(128) NOT NULL,
   quantity character varying(128) NOT NULL,
   unit character varying(128) NOT NULL,
-  recipe_id integer REFERENCES recipes(id),
-  PRIMARY KEY (recipe_id, name)
+  CONSTRAINT fk_ingredient
+    FOREIGN KEY (recipe_id)
+      REFERENCES recipes(id)
 );
 
 CREATE TABLE public.reviews (
